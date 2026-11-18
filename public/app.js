@@ -105,14 +105,27 @@
   }
 
   // ---------- cards ----------
+  const L=28,R=72,C=50;
+  const PIPS={
+    '2':[[C,16],[C,84]],'3':[[C,16],[C,50],[C,84]],
+    '4':[[L,16],[R,16],[L,84],[R,84]],'5':[[L,16],[R,16],[C,50],[L,84],[R,84]],
+    '6':[[L,16],[R,16],[L,50],[R,50],[L,84],[R,84]],'7':[[L,16],[R,16],[C,33],[L,50],[R,50],[L,84],[R,84]],
+    '8':[[L,16],[R,16],[C,33],[L,50],[R,50],[C,67],[L,84],[R,84]],
+    '9':[[L,16],[R,16],[L,38],[R,38],[C,50],[L,62],[R,62],[L,84],[R,84]],
+    '10':[[L,16],[R,16],[C,27],[L,38],[R,38],[L,62],[R,62],[C,73],[L,84],[R,84]]};
+  function face(c){
+    if(c.r==='A') return '<span class="pip ace" style="left:50%;top:50%">'+c.s+'</span>';
+    if('JQK'.includes(c.r)) return '<div class="court"><b>'+c.r+'</b><span class="cs t">'+c.s+'</span><span class="cs b">'+c.s+'</span></div>';
+    return PIPS[c.r].map(([x,y])=>'<span class="pip'+(y>50?' flip':'')+'" style="left:'+x+'%;top:'+y+'%">'+c.s+'</span>').join('');
+  }
   function cardHTML(c, key, delay) {
     const anim = !seen.has(key);
     if (anim) seen.add(key);
     const cls = 'card' + (anim ? ' deal' : '');
-    const st = anim ? ` style="animation-delay:${delay}ms"` : '';
-    if (!c) return `<div class="${cls} back"${st}></div>`;
+    const st = anim ? ' style="animation-delay:'+delay+'ms"' : '';
+    if (!c) return '<div class="'+cls+' back"'+st+'><i></i></div>';
     const red = c.s === '♥' || c.s === '♦' ? ' red' : '';
-    return `<div class="${cls}${red}"${st}><div class="c"><span>${c.r}</span><span>${c.s}</span></div><div class="mid">${c.s}</div></div>`;
+    return '<div class="'+cls+red+'"'+st+'><div class="idx"><span>'+c.r+'</span><span>'+c.s+'</span></div><div class="face">'+face(c)+'</div><div class="idx br"><span>'+c.r+'</span><span>'+c.s+'</span></div></div>';
   }
   const handHTML = (cards, id) => {
     let n = 0;
@@ -141,19 +154,26 @@
     if (p.bet && !['sitout', 'broke', 'waiting'].includes(p.status)) return `<span class="sbet ready">${fmt(p.bet * (p.doubled ? 2 : 1))}${p.doubled ? ' (2x)' : ''}</span>`;
     return '<span class="sbet">&nbsp;</span>';
   }
+  const DEN=[5000,1000,500,100,50,25,10];
+  function stack(amount){
+    let left=amount,chips=[];
+    for(const d of DEN){ while(left>=d&&chips.length<14){chips.push(d);left-=d;} }
+    chips.reverse(); // big at bottom
+    return chips.map((v,i)=>'<i class="sc" data-v="'+v+'" style="bottom:'+(i*5)+'px"></i>').join('');
+  }
   function renderSeats() {
     let h = '';
     S.players.forEach((p, idx) => {
       const out = ['sitout', 'broke', 'waiting'].includes(p.status) && S.phase !== 'betting';
-      h += `<div class="seat ${p.me ? 'me' : ''} ${p.turn ? 'turn' : ''} ${out ? 'out' : ''}">
-        <div class="sname">${p.connected ? '' : '<i class="off" title="Disconnected"></i>'}${p.isHost ? '👑 ' : ''}${esc(p.name)}${p.me ? ' (you)' : ''}</div>
-        <div class="smoney">${fmt(p.money)}</div>
-        <div class="hand">${handHTML(p.cards, 'p' + idx + '-' + S.round)}</div>
-        ${p.cards.length ? `<span class="score">${p.value}</span>` : ''}
-        ${badge(p)}${betLabel(p)}
-      </div>`;
+      const amt = S.phase === 'betting' ? (p.ready ? p.bet : 0) : (p.bet && !['sitout','broke','waiting'].includes(p.status) ? p.bet * (p.doubled ? 2 : 1) : 0);
+      h += '<div class="seat '+(p.me?'me':'')+' '+(p.turn?'turn':'')+' '+(out?'out':'')+'">'+
+        '<div class="hand">'+handHTML(p.cards,'p'+idx+'-'+S.round)+'</div>'+
+        '<div class="mid">'+(p.cards.length?'<span class="score">'+p.value+'</span>':'')+badge(p)+'</div>'+
+        '<div class="spot">'+stack(amt)+(amt?'<em>'+fmt(amt)+(p.doubled?' ×2':'')+'</em>':'')+'</div>'+
+        '<div class="plate"><div class="sname">'+(p.connected?'':'<i class="off" title="Disconnected"></i>')+(p.isHost?'♛ ':'')+esc(p.name)+(p.me?' (you)':'')+'</div>'+
+        '<div class="smoney">'+fmt(p.money)+(S.phase==='betting'&&p.status==='betting'&&!p.ready?' · betting…':'')+(S.phase==='betting'&&p.status==='sitout'?' · sitting out':'')+(p.status==='broke'?' · out of chips':'')+'</div></div></div>';
     });
-    for (let i = S.players.length; i < 4; i++) h += '<div class="seat empty">Open seat</div>';
+    for (let i = S.players.length; i < 4; i++) h += '<div class="seat empty"><div class="spot"></div><div class="plate"><div class="sname">Open seat</div></div></div>';
     $('seats').innerHTML = h;
   }
 

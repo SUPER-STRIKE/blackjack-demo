@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Royal Blackjack Online</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="table.css">
 </head>
 <body>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -73,14 +74,16 @@
   </header>
   <div class="timerbar"><div id="timerFill"></div></div>
 
-  <section class="felt">
+  <div class="tablewrap"><section class="felt">
+    <svg class="felttext" viewBox="0 0 800 160" aria-hidden="true"><defs><path id="arc1" d="M120 120 Q400 10 680 120"/><path id="arc2" d="M170 150 Q400 50 630 150"/></defs><text><textPath href="#arc1" startOffset="50%" text-anchor="middle">BLACKJACK PAYS 3 TO 2</textPath></text><text class="t2"><textPath href="#arc2" startOffset="50%" text-anchor="middle">Dealer must stand on all 17s</textPath></text></svg>
+    <div class="shoebox" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="dealer">
       <div class="label">DEALER <span id="dScore" class="score"></span></div>
       <div class="hand" id="dHand"></div>
     </div>
     <div class="banner" id="banner"></div>
     <div class="seats" id="seats"></div>
-  </section>
+  </section></div>
 
   <footer class="dock" id="dock">
     <div class="dock-top">
