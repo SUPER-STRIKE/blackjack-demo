@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Royal Blackjack Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- HOME -->
+<main id="home" class="screen">
+  <div class="panel home-card">
+    <h1 class="logo">ROYAL <span>BLACKJACK</span></h1>
+    <p class="sub">Online table · up to 4 players · shared shoe</p>
+    <label class="field">Your name
+      <input id="name" maxlength="14" placeholder="Enter a name" autocomplete="nickname">
+    </label>
+    <div class="tabs">
+      <button class="tab active" data-tab="host">Host a table</button>
+      <button class="tab" data-tab="join">Join a table</button>
+    </div>
+    <section id="tab-host" class="stack">
+      <div class="field">Decks in the shoe <small>(shared by all players, max 6)</small>
+        <div class="decks" id="deckPick"></div>
+      </div>
+      <label class="field">Starting chips for everyone
+        <input id="money" type="number" min="100" step="100" value="1000" inputmode="numeric">
+      </label>
+      <div class="presets" id="moneyPresets"></div>
+      <button class="btn primary big" id="createBtn">Create table</button>
+    </section>
+    <section id="tab-join" class="stack" hidden>
+      <label class="field">Room code
+        <input id="code" maxlength="4" placeholder="ABCD" class="code-input" autocapitalize="characters" autocomplete="off">
+      </label>
+      <button class="btn primary big" id="joinBtn">Join table</button>
+    </section>
+    <p id="homeErr" class="err"></p>
+    <p class="rules">Dealer stands on all 17s · Blackjack pays 3:2 · Double on any two cards · Min bet $10</p>
+  </div>
+</main>
+
+<!-- LOBBY -->
+<main id="lobby" class="screen" hidden>
+  <div class="panel home-card">
+    <h2 class="logo small">Waiting room</h2>
+    <div class="codebox">
+      <span>ROOM CODE</span>
+      <strong id="lobbyCode">----</strong>
+      <div class="row">
+        <button class="btn" id="copyCode">Copy code</button>
+        <button class="btn" id="copyLink">Copy invite link</button>
+      </div>
+    </div>
+    <div class="lobby-settings" id="lobbySettings"></div>
+    <ul class="plist" id="lobbyPlayers"></ul>
+    <button class="btn primary big" id="startBtn" hidden>Start game</button>
+    <p id="lobbyWait" class="sub" hidden>Waiting for the host to start…</p>
+    <button class="btn ghost" id="lobbyLeave">Leave</button>
+  </div>
+</main>
+
+<!-- TABLE -->
+<main id="table" class="screen table-screen" hidden>
+  <header class="topbar">
+    <div class="tb-left"><span class="pill">ROOM <b id="tCode"></b></span>
+      <span class="pill hide-xs" id="tDecks"></span></div>
+    <div class="shoe" title="Cards left in shoe"><div id="shoeBar"></div><span id="shoeTxt"></span></div>
+    <div class="tb-right"><button class="btn small" id="logBtn">Log</button><button class="btn small ghost" id="leaveBtn">Leave</button></div>
+  </header>
+  <div class="timerbar"><div id="timerFill"></div></div>
+
+  <section class="felt">
+    <div class="dealer">
+      <div class="label">DEALER <span id="dScore" class="score"></span></div>
+      <div class="hand" id="dHand"></div>
+    </div>
+    <div class="banner" id="banner"></div>
+    <div class="seats" id="seats"></div>
+  </section>
+
+  <footer class="dock" id="dock">
+    <div class="dock-top">
+      <div class="bal">Chips <b id="myMoney">$0</b></div>
+      <div class="bal">Bet <b id="myBet">$0</b></div>
+    </div>
+    <div id="betPanel" class="stack" hidden>
+      <div class="chips" id="chips"></div>
+      <div class="row center">
+        <button class="btn small" id="clearBet">Clear</button>
+        <button class="btn small" id="rebet">Last bet</button>
+        <button class="btn small" id="allIn">All in</button>
+        <button class="btn small ghost" id="sitOut">Sit out</button>
+      </div>
+      <button class="btn primary big" id="dealBtn">Place bet</button>
+    </div>
+    <div id="actPanel" class="row center" hidden>
+      <button class="btn act hit" id="hitBtn">Hit <kbd>H</kbd></button>
+      <button class="btn act stand" id="standBtn">Stand <kbd>S</kbd></button>
+      <button class="btn act dbl" id="dblBtn">Double <kbd>D</kbd></button>
+    </div>
+    <div id="infoPanel" class="info" hidden></div>
+    <button class="btn primary" id="rebuyBtn" hidden>Rebuy chips</button>
+  </footer>
+</main>
+
+<div id="logModal" class="modal" hidden><div class="panel"><h3>Table log</h3><ul id="logList"></ul><button class="btn" id="logClose">Close</button></div></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
