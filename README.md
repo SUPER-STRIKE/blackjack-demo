@@ -33,8 +33,9 @@ Put Caddy/nginx in front for HTTPS (WebSocket upgrade headers must pass through;
 Caddy's `reverse_proxy localhost:3000` does this automatically).
 
 ## Rules
-Dealer stands on all 17s, blackjack pays 3:2 (push vs dealer blackjack), double on first two cards,
-min bet $10, 25s to bet / 25s per turn (auto-stand). Broke players can rebuy the starting amount.
-Refreshing the page rejoins your seat. If the host leaves, the next player becomes host.
+Up to 6 players, 1-6 decks (shared shoe). Dealer stands on all 17s, blackjack pays 3:2, double on first two cards,
+split pairs (one split, split aces get one card), insurance when the dealer shows an Ace (pays 2:1). Min bet $10.
+Win the match by reaching the goal (default 10x starting chips) or by outlasting everyone; final ranking 1st-6th.
+No rebuys. Refreshing rejoins your seat. Sound effects + music are generated in the browser (toggle top-right).
 Rooms live in server memory (restart = rooms gone); run a single instance.
 The original single-player game is kept as `original_singleplayer.html`.
